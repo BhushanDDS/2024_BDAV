@@ -30,6 +30,21 @@ hdfs dfs -mkdir /BigDemo
 
 10)cp		hdfs dfs -cp /BigDemo/demo/data.txt /BigDemo/dataflair 
 
+size
+hdfs dfs -du -s -h /demo
+
+new file 
+echo "This is a sample file" > sample.txt
+hdfs dfs -put sample.txt /new_directory
+
+help
+hdfs dfs -help [command]
+
+thresh folder
+hdfs dfs -rm /example/localfile.txt
+
+
+
 *************************************************************************************\
 
 MapReduce 
@@ -39,6 +54,7 @@ MapReduce
 * hdfs dfs -put "E:\hadoop-3.3.0\data.text" /input
 * hdfs jar "E:\hadoop-3.3.0\share\hadoop\mapreduce\hadoop-mapreduce-examples-3.3.0" wordcount/input/output
 * hdfs dfs -cat /output/part-r-00000
+
 
 ***************************************************************************************************
 Mongodb 
@@ -71,7 +87,6 @@ db.Friends.createIndex({ age: 1 });
 // Get the list of indexes on the Friends collection
 db.Friends.getIndexes();
 
-
 // Drop the index on the age field in Friends
 db.Friends.dropIndex("age_1");
 
@@ -80,6 +95,35 @@ db.Friends.find().sort({ age: 1 });
 
 // Sort Friends by age in descending order
 db.Friends.find().sort({ age: -1 });
+
+
+
+db.Order.find({ ord_description: { $regex: "^[TS]", $options: "i" } })
+
+db.Order.find({ ord_date: "2011-07-19" })
+db.Order.find({ $and: [{ ord_num: 102 }, { ord_description: "Sofa" }] })
+
+
+
+Query to Return All Customer Names and Customer Countries
+javascript
+Copy code
+db.Customer.find({}, { cust_name: 1, country: 1, _id: 0 })
+
+ Display All Customers Where cust_code is ‘CS001’ or ‘CS213’
+javascript
+Copy code
+db.Customer.find({ cust_code: { $in: ["CS001", "CS213"] } })
+
+Update the City Name of Customer with cust_name = “Rahul”
+javascript
+Copy code
+db.Customer.updateOne({ cust_name: "Rahul" }, { $set: { cust_city: "Pune" } })
+
+ Update Name and City of Any One Customer Using updateMany()
+javascript
+Copy code
+db.Customer.updateMany({ cust_code: "CS005" }, { $set: { cust_name: "Sara Williams", cust_city: "Manchester
 
 *******************************************************************************************************************
 
