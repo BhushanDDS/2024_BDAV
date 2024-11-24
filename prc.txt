@@ -153,7 +153,58 @@ drop view stud_503;
 
 
 LOAD DATA LOCAL INPATH '/home/user/employee.txt' INTO TABLE employee;
+LOAD DATA LOCAL INPATH '/path/to/your/data.csv' INTO TABLE employee;
 
+
+-- 1. Create the Student Table
+CREATE TABLE IF NOT EXISTS Student (
+  Rollno INT,
+  Firstname STRING,
+  Lastname STRING,
+  Course STRING
+);
+
+-- 2. Load Data into the Student Table
+-- (Assuming data is available in a CSV file)
+LOAD DATA LOCAL INPATH '/path/to/student_data.csv' INTO TABLE Student;
+
+-- Or insert sample data directly
+INSERT INTO TABLE Student VALUES
+(1, 'John', 'Doe', 'MCA'),
+(2, 'Jane', 'Smith', 'BCA'),
+(3, 'Alex', 'Johnson', 'MCA'),
+(4, 'Chris', 'Lee', 'BBA'),
+(5, 'Maria', 'Davis', 'MCA');
+
+-- 3. Prepare a List of All Courses and Their Respective Number of Students
+SELECT Course, COUNT(*) AS NumberOfStudents
+FROM Student
+GROUP BY Course;
+
+-- 4. Display Full Name and Rollno of Students Studying in the MCA Course
+SELECT CONCAT(Firstname, ' ', Lastname) AS FullName, Rollno
+FROM Student
+WHERE Course = 'MCA';
+
+-- 5. Create a View for Students Whose Rollno is Greater Than 10 and Then Drop the View
+CREATE VIEW IF NOT EXISTS StudentView AS
+SELECT Rollno, Firstname, Lastname, Course
+FROM Student
+WHERE Rollno > 10;
+
+-- To query the view
+SELECT * FROM StudentView;
+
+-- Drop the view
+DROP VIEW IF EXISTS StudentView;
+
+-- 6. Create an Index on the Student Table and Then Drop It
+CREATE INDEX idx_course
+ON TABLE Student (Course)
+AS 'org.apache.hadoop.hive.ql.index.compact.CompactIndexHandler';
+
+-- Drop the index
+DROP INDEX IF EXISTS idx_course ON TABLE Student;
 
 ***********************************************************************************
 
