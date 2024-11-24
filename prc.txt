@@ -205,6 +205,82 @@ AS 'org.apache.hadoop.hive.ql.index.compact.CompactIndexHandler';
 
 -- Drop the index
 DROP INDEX IF EXISTS idx_course ON TABLE Student;
+**********************************
+-- 1. Create the Book_Details database
+CREATE DATABASE IF NOT EXISTS Book_Details;
+USE Book_Details;
+-- 2. Sample books.csv file created manually.
+-- 3. Create the Book_table
+CREATE TABLE IF NOT EXISTS Book_table (
+  bid INT,
+  btitle STRING,
+  author_name STRING,
+  publisher STRING,
+  rating FLOAT
+)
+ROW FORMAT DELIMITED
+FIELDS TERMINATED BY ','
+STORED AS TEXTFILE;
+-- 4. Load the data from books.csv
+LOAD DATA LOCAL INPATH '/path/to/books.csv' INTO TABLE Book_table;
+-- 5. Display authors with rating less than 3
+SELECT author_name
+FROM Book_table
+WHERE rating < 3;
+-- 6. Display publisher-wise details of authors
+SELECT publisher, author_name, COUNT(*) AS number_of_books
+FROM Book_table
+GROUP BY publisher, author_name;
+-- 7. Rename the table to BOOK_List_Details
+ALTER TABLE Book_table RENAME TO BOOK_List_Details;
+-- 8. Rename the column author_name to Author_Name
+ALTER TABLE BOOK_List_Details CHANGE COLUMN author_name Author_Name STRING;
+
+
+
+1,John,1999-01-01,75,New York,MCA
+2,Jane,2000-02-15,85,Los Angeles,BBA
+3,Alex,1998-05-12,45,Chicago,MCA
+4,Chris,2001-06-18,50,San Francisco,BBA
+5,Maria,1999-07-23,95,Boston,MCA
+6,Paul,1997-11-03,65,Miami,BBA
+7,Emma,2000-09-25,80,Seattle,MCA
+8,James,1998-12-12,60,Las Vegas,BBA
+9,Liam,1999-02-08,70,New York,MCA
+10,Olivia,2000-05-06,55,Chicago,BBA
+-- 1. Create the Student Database
+CREATE DATABASE IF NOT EXISTS Student;
+USE Student;
+-- 2. Create the Student table with partition on 'course'
+CREATE TABLE IF NOT EXISTS Student (
+  rno INT,
+  name STRING,
+  dob STRING,
+  mark INT,
+  city STRING
+)
+PARTITIONED BY (course STRING)
+ROW FORMAT DELIMITED
+FIELDS TERMINATED BY ','
+STORED AS TEXTFILE;
+-- 3. Load data from students.csv file into the partitioned table
+LOAD DATA LOCAL INPATH '/path/to/students.csv' INTO TABLE Student PARTITION (course='MCA');
+LOAD DATA LOCAL INPATH '/path/to/students.csv' INTO TABLE Student PARTITION (course='BBA');
+-- 4. Display course-wise details
+SELECT course, rno, name, dob, mark, city
+FROM Student
+WHERE course IN ('MCA', 'BBA');
+-- 5. Display the roll number and name of students whose marks are greater than 50
+SELECT rno, name
+FROM Student
+WHERE mark > 50;
+-- 6. Display partition-wise student details
+SELECT * FROM Student WHERE course = 'MCA';  -- For MCA partition
+SELECT * FROM Student WHERE course = 'BBA';  -- For BBA partition
+-- 7. Create a new partition for the MBA course
+ALTER TABLE Student ADD PARTITION (course='MBA');
+
+
 
 ***********************************************************************************
 
