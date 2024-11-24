@@ -1,4 +1,115 @@
 pig 
+
+PIG 
+PIG_HOME 
+path
+
+path:= pig bin 
+pig.cmd in \bin
+set HADOOP_BIN_PATH=%HADOOP_HOME%\libexec
+start-all.cmd
+
+pig -x mapreduce
+
+create two files 
+f1 
+f2
+
+* hdfs dfs -mkdir /pig
+* hdfs dfs -put "source " /pig
+(upload both)
+
+*hdfs dfs -put C:\Users\student\Downloads\BigData\data_for_pig.txt hdfs://localhost:9000/pig1/
+
+*hdfs dfs -cat hdfs://localhost:9000/pig1/data_for_pig.txt
+hdfs dfs -cat hdfs://172.16.4.5:9000/pig1/data_for_pig.txt
+
+pig -x local or mapreduce
+
+create variable 
+student = LOAD 'hdfs://172.16.4.5:9000/pig1/data_for_pig.txt' USING PigStorage(',')as (id:int,fname:chararray);
+dump student
+
+create another varaible city 
+
+operators 
+FOREACH
+foreach = foreach student generate id, fname;
+dump foreach
+
+FILTER
+filter = filter student by id>004;
+dump filter
+
+JOIN
+join = join student by city , city by city 
+dump join 
+
+Order By
+ob=order student by city asc;
+dump ob;
+
+Distinct
+dis= distinct student;
+dump dis;
+
+store order_command_desc into '/desc';
+
+Group 
+grp = group student by city ;
+
+COgroup
+cp= cogroup student by city , city by city;
+dump cp;
+
+cross 
+cross= cross student city;
+
+limit
+lm =limit student 3;
+
+split 
+split student into x if id >2 , y if id >3;
+dump x;
+dump y;
+
+
+
+data for pig 
+table 1 data 
+001,ABC,PQRS,9422980768,Delhi
+002,LMN,LMNO,9422980745,Mumbai
+003,XYZ,XYZA,9422980754,Chennai
+004,DEF,DEFG,9422980744,Delhi
+005,GHI,GHIJ,9422980719,Pune
+
+
+table 2 data
+Delhi,1.9B
+Mumbai,1.4B
+Chennai,1.3B
+Delhi,1.9B
+Pune,1.2B
+
+
+
+table 1 query 
+student = LOAD 'hdfs://172.16.4.4:9000/pig/data_for_pig.txt' USING PigStorage(',') as
+(id:int,fname:chararray,lname:chararray,phone:chararray,city:chararray);
+		or 
+student = LOAD 'hdfs://localhost:9000/pig/data_for_pig.txt' USING PigStorage(',') as
+(id:int,fname:chararray,lname:chararray,phone:chararray,city:chararray);
+
+
+
+
+table 2 query 
+city = LOAD 'hdfs://172.16.4.4:9000/pig/data_for_pig_new.txt' USING PigStorage(',') as
+(city:chararray, population:chararray);
+
+
+*************************************************************************************************
+
 1,John,New York,101,2
 2,Jane,Chicago,102,1
 3,Emily,Boston,101,3
@@ -46,11 +157,9 @@ STORE CUSTOMER_PRODUCT INTO 'customer_product_data' USING PigStorage(',');
 SORTED_CUSTOMERS = ORDER CUSTOMER BY quantity DESC;
 DUMP SORTED_CUSTOMERS;
 
-
-
-
-
 pig -x local script.pig
+
+***************************************************
 
 
 
