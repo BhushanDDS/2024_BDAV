@@ -1,0 +1,273 @@
+hadoop 
+* java -version 
+HADOOP_HOME
+JAVA_HOME
+set bin sbin java1.8 path in path 
+
+edit files
+
+*	hadoop -version
+*	hdfs namenode -format 
+start-dfs.cmd
+start.yarn.cmd
+start-all.cmd
+
+*	jps
+http://localhost:8088/cluster
+http://localhost:9870/
+
+1) version  { hadoop -version
+2)mkdir		hdfs dfs -mkdir /demo
+3)ls		hdfs dfs -ls /demo
+4)put 		hdfs -put "filepath" /demo
+5)copyFromLocal hdfs -copyFromLocal "path" /demo
+6)get 		hdfs dfs -get /demo/test1.txt "E:\demo1"
+7)copyToLocat   hdfs dfs -copyToLocal /demo/data.txt "E:\demo1"
+8)cat		hdfs dfs -cat /demo/data.txt
+
+hdfs dfs -mkdir /BigDemo
+9)mv 		hdfs dfs -mv /demo /BigDemo
+
+10)cp		hdfs dfs -cp /BigDemo/demo/data.txt /BigDemo/dataflair 
+
+*************************************************************************************\
+
+MapReduce 
+
+* start-all.cmd
+* hdfs dfs -mkdir /input 
+* hdfs dfs -put "E:\hadoop-3.3.0\data.text" /input
+* hdfs jar "E:\hadoop-3.3.0\share\hadoop\mapreduce\hadoop-mapreduce-examples-3.3.0" wordcount/input/output
+* hdfs dfs -cat /output/part-r-00000
+
+***************************************************************************************************
+Mongodb 
+
+show dbs;
+
+use demo;
+
+
+create collection  : db.createCollection("newCollection");
+
+insert value : db.newCollection.insertOne({"id":"1","fname":"xyz"});
+
+show collections : show collections;
+
+drop : db.collectionName.drop();
+
+find : db.tablename.find({"fname":"xyz"});
+
+insertMany : db.eablename.insertMany([{},{},{}])
+
+updatae :	db.tablename.updateOne({fname:"lmn"},{$set:{id:1000}});
+
+delete : 	db.tablename.deleteOne({"id":1000});
+
+
+// Create an index on the Friends' age field
+db.Friends.createIndex({ age: 1 });
+
+// Get the list of indexes on the Friends collection
+db.Friends.getIndexes();
+
+
+// Drop the index on the age field in Friends
+db.Friends.dropIndex("age_1");
+
+// Sort Friends by age in ascending order
+db.Friends.find().sort({ age: 1 });
+
+// Sort Friends by age in descending order
+db.Friends.find().sort({ age: -1 });
+
+*******************************************************************************************************************
+
+Hive
+https://demo.gethue.com/hue/editor/?type=6
+create database user_db;
+show databases;
+create table user_db.student (id int, name String, mobile String, address String);
+drop table user_db.student;
+create table user_db.student (id int, name String, mobile String, address String)
+tblproperties ( 'creator'='asn', 'created_at'='30-10-2023');
+describe user_db.student;
+
+insert into user_db.student values(501,'ppp qqq rrr','1234567890','pqrs');
+insert into user_db.student values(502,'abc qqq rrr','1234567890','abcrs');
+insert into user_db.student values(503,'lmn qqq rrr','1234567890','lmns');
+insert into user_db.student values(504,'xyz qqq rrr','1234567890','xyzs');
+insert into user_db.student values(505,'tuv qqq rrr','1234567890','tuvs');
+
+
+select * from student;
+
+CREATE VIEW stud_503 AS SELECT * FROM student WHERE id >503;
+select * from stud_503;
+drop view stud_503;
+
+
+
+LOAD DATA LOCAL INPATH '/home/user/employee.txt' INTO TABLE employee;
+
+
+***********************************************************************************
+
+PIG 
+PIG_HOME 
+path
+
+path:= pig bin 
+pig.cmd in \bin
+set HADOOP_BIN_PATH=%HADOOP_HOME%\libexec
+start-all.cmd
+
+pig -x mapreduce
+
+create two files 
+f1 
+f2
+
+* hdfs dfs -mkdir /pig
+* hdfs dfs -put "source " /pig
+(upload both)
+
+*hdfs dfs -put C:\Users\student\Downloads\BigData\data_for_pig.txt hdfs://localhost:9000/pig1/
+
+*hdfs dfs -cat hdfs://localhost:9000/pig1/data_for_pig.txt
+hdfs dfs -cat hdfs://172.16.4.5:9000/pig1/data_for_pig.txt
+
+pig -x local or mapreduce
+
+create variable 
+student = LOAD 'hdfs://172.16.4.5:9000/pig1/data_for_pig.txt' USING PigStorage(',')as (id:int,fname:chararray);
+dump student
+
+create another varaible city 
+
+operators 
+FOREACH
+foreach = foreach student generate id, fname;
+dump foreach
+
+FILTER
+filter = filter student by id>004;
+dump filter
+
+JOIN
+join = join student by city , city by city 
+dump join 
+
+Order By
+ob=order student by city asc;
+dump ob;
+
+Distinct
+dis= distinct student;
+dump dis;
+
+store order_command_desc into '/desc';
+
+Group 
+grp = group student by city ;
+
+COgroup
+cp= cogroup student by city , city by city;
+dump cp;
+
+cross 
+cross= cross student city;
+
+limit
+lm =limit student 3;
+
+split 
+split student into x if id >2 , y if id >3;
+dump x;
+dump y;
+
+
+
+data for pig 
+table 1 data 
+001,ABC,PQRS,9422980768,Delhi
+002,LMN,LMNO,9422980745,Mumbai
+003,XYZ,XYZA,9422980754,Chennai
+004,DEF,DEFG,9422980744,Delhi
+005,GHI,GHIJ,9422980719,Pune
+
+
+table 2 data
+Delhi,1.9B
+Mumbai,1.4B
+Chennai,1.3B
+Delhi,1.9B
+Pune,1.2B
+
+
+
+table 1 query 
+student = LOAD 'hdfs://172.16.4.4:9000/pig/data_for_pig.txt' USING PigStorage(',') as
+(id:int,fname:chararray,lname:chararray,phone:chararray,city:chararray);
+		or 
+student = LOAD 'hdfs://localhost:9000/pig/data_for_pig.txt' USING PigStorage(',') as
+(id:int,fname:chararray,lname:chararray,phone:chararray,city:chararray);
+
+
+
+
+table 2 query 
+city = LOAD 'hdfs://172.16.4.4:9000/pig/data_for_pig_new.txt' USING PigStorage(',') as
+(city:chararray, population:chararray);
+
+
+*************************************************************************************************
+
+
+set SPARK_HOME
+set JAVA_HOME
+
+sey paths := spark bin sbin and java
+
+
+go to the directory you stored your spark
+
+spark-shell
+
+http://localhost:4040/jobs/
+
+spark.version
+
+val info = Array(1,2,3,4)
+val distinfo = sc.parallelize(info)
+
+crate RDD
+val data = sc.parallelized(List(10,20,30));
+data.collect 
+val mapfunc = data.map(x => x + 10)
+mapfunc.collect
+
+
+create Rdd using text file 
+create text file
+ABC DEF GHI
+LMN PQR STU
+XYZ ABC LMN
+
+hdfs dfs -put E:\spark-3.1.2-bin-hadoop3.2\filename /spark
+
+val data=sc.textFile("data_for_spark_practical.txt")
+>val splitdata = data.flatMap(line => line.split(" "));
+> splitdata.collect;
+>val mapdata = splitdata.map(word => (word,1));
+>mapdata.collect;
+>val reducedata = mapdata.reduceByKey(_+_);
+>reducedata.collect;
+
+
+
+
+
+
+
+

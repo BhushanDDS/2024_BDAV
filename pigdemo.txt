@@ -1,0 +1,58 @@
+pig 
+1,John,New York,101,2
+2,Jane,Chicago,102,1
+3,Emily,Boston,101,3
+4,Michael,San Francisco,103,1
+5,Rachel,New York,102,2
+6,Mike,Chicago,104,4
+7,Sarah,Boston,101,1
+8,David,San Francisco,104,2
+9,Anna,New York,103,3
+10,Chris,Chicago,101,5
+
+101,TV,500
+102,Refrigerator,700
+103,Microwave,200
+104,Air Conditioner,1000
+105,Washing Machine,600
+
+
+script.pig
+-- Load customer data
+CUSTOMER = LOAD 'cust.txt' USING PigStorage(',') 
+    AS (cno: INT, name: CHARARRAY, city: CHARARRAY, productid: INT, quantity: INT);
+
+-- Load product data
+PRODUCT = LOAD 'prod.txt' USING PigStorage(',') 
+    AS (pid: INT, pname: CHARARRAY, price: FLOAT);
+
+-- Join CUSTOMER and PRODUCT on productid and pid
+CUSTOMER_PRODUCT = JOIN CUSTOMER BY productid, PRODUCT BY pid;
+
+-- 5. Display all customers who purchased "TV"
+TV_CUSTOMERS = FILTER CUSTOMER_PRODUCT BY pname == 'TV';
+DUMP TV_CUSTOMERS;
+
+-- 6. Display product-wise customer count
+CUSTOMER_GROUPED = GROUP CUSTOMER_PRODUCT BY pname;
+PRODUCT_CUSTOMER_COUNT = FOREACH CUSTOMER_GROUPED 
+    GENERATE group AS pname, COUNT(CUSTOMER_PRODUCT) AS customer_count;
+DUMP PRODUCT_CUSTOMER_COUNT;
+
+-- 7. Store relation data in local file system
+STORE CUSTOMER_PRODUCT INTO 'customer_product_data' USING PigStorage(',');
+
+-- 8. Sort customer details by quantity in descending order
+SORTED_CUSTOMERS = ORDER CUSTOMER BY quantity DESC;
+DUMP SORTED_CUSTOMERS;
+
+
+
+
+
+pig -x local script.pig
+
+
+
+
+
